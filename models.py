@@ -301,7 +301,7 @@ class Net4(nn.Module):
         self.dropout1 = nn.Dropout(p=0.2)
         self.dropout2 = nn.Dropout(p=0.5)
 
-        self.fc1 = nn.Linear(32*output_size*output_size, 150)
+        self.fc1 = nn.Linear(64*output_size*output_size, 150)
         self.fc2 = nn.Linear(150, 136)
         
         ## Note that among the layers to add, consider including:
