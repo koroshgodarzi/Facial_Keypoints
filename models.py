@@ -178,6 +178,8 @@ class Net1_ELU(nn.Module):
         # 1 input image channel (grayscale), 32 output channels/feature maps, 5x5 square convolution kernel
         self.conv1 = nn.Conv2d(1, 32, 3, padding=1)
         self.conv2 = nn.Conv2d(32, 64, 3, padding=1)
+        
+        self.ELU = torch.nn.ELU()
 
         self.pool = nn.MaxPool2d(2, 2)
 
@@ -205,8 +207,8 @@ class Net1_ELU(nn.Module):
         ## TODO: Define the feedforward behavior of this model
         ## x is the input image and, as an example, here you may choose to include a pool/conv step:
         ## x = self.pool(F.relu(self.conv1(x)))
-        x = self.pool(F.ELU(self.conv1(x)))
-        x = self.pool(F.ELU(self.conv2(x)))
+        x = self.pool(self.ELU(self.conv1(x)))
+        x = self.pool(self.ELU(self.conv2(x)))
 
         x = x.view(x.size(0), -1)
         x = self.dropout(x)
@@ -353,6 +355,8 @@ class Net3_ELU(nn.Module):
         self.conv7 =  nn.Conv2d(64, 512, 3, padding=1)
         self.conv8 =  nn.Conv2d(512, 256, 3, padding=1)
 
+        self.ELU = torch.nn.ELU()
+
         self.pool = nn.MaxPool2d(2, 2)
 
         output_size = self._output_size([self.conv1, self.pool, self.conv2, self.pool, self.conv3, self.pool, self.conv4, self.pool], 224)
@@ -379,10 +383,10 @@ class Net3_ELU(nn.Module):
         ## TODO: Define the feedforward behavior of this model
         ## x is the input image and, as an example, here you may choose to include a pool/conv step:
         ## x = self.pool(F.relu(self.conv1(x)))
-        x = self.pool(F.ELU(self.conv2(F.ELU(self.conv1(x)))))
-        x = self.pool(F.ELU(self.conv4(F.ELU(self.conv3(x)))))
-        x = self.pool(F.ELU(self.conv6(F.ELU(self.conv5(x)))))
-        x = self.pool(F.ELU(self.conv8(F.ELU(self.conv7(x)))))
+        x = self.pool(self.ELU(self.conv2(self.ELU(self.conv1(x)))))
+        x = self.pool(self.ELU(self.conv4(self.ELU(self.conv3(x)))))
+        x = self.pool(self.ELU(self.conv6(self.ELU(self.conv5(x)))))
+        x = self.pool(self.ELU(self.conv8(self.ELU(self.conv7(x)))))
 
         x = x.view(x.size(0), -1)
         x = self.dropout(x)
@@ -511,3 +515,8 @@ class Net4(nn.Module):
         
         # a modified x, having gone through all the layers of your model, should be returned
         return x
+    
+
+
+if __name__ == '__main__':
+    pass
