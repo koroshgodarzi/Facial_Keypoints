@@ -22,6 +22,8 @@ class FacialKeypointsDataset(Dataset):
         self.key_pts_frame = pd.read_csv(csv_file)
         self.root_dir = root_dir
         self.transform = transform
+        self.per_key_point = per_key_point
+        self.key_point = key_point
 
     def __len__(self):
         return len(self.key_pts_frame)
