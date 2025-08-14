@@ -11,7 +11,7 @@ import cv2
 class FacialKeypointsDataset(Dataset):
     """Face Landmarks dataset."""
 
-    def __init__(self, csv_file, root_dir, transform=None):
+    def __init__(self, csv_file, root_dir, transform=None, per_key_point=False, key_point=0):
         """
         Args:
             csv_file (string): Path to the csv file with annotations.
@@ -38,6 +38,8 @@ class FacialKeypointsDataset(Dataset):
         
         key_pts = self.key_pts_frame.iloc[idx, 1:].values
         key_pts = key_pts.astype('float').reshape(-1, 2)
+        if per_key_point:
+            key_pts = key_pts[key_point, :]
         sample = {'image': image, 'keypoints': key_pts}
 
         if self.transform:
