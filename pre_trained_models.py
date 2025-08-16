@@ -1,8 +1,8 @@
 
-from huggingface_hub import hf_hub_download
-from ultralytics import YOLO
-from supervision import Detections
-from PIL import Image
+# from huggingface_hub import hf_hub_download
+# from ultralytics import YOLO
+# from supervision import Detections
+# from PIL import Image
 import torch
 import os
 from torch.utils.data import Dataset, DataLoader
@@ -12,19 +12,17 @@ import matplotlib.image as mpimg
 import pandas as pd
 
 
-
 from torchvision.models import densenet121
 
 class CustomDenseNet(torch.nn.Module):
     def __init__(self):
         super(CustomDenseNet, self).__init__()
         self.base_model = densenet121(pretrained=True)
-        self.fc = torch.nn.Linear(1024, 136)
+        self.fc = torch.nn.Linear(50176, 136)
         self.dropout = torch.nn.Dropout(p=0.5)
 
     def forward(self, x):
         x = self.base_model.features(x)
-        x = torch.adaptive_avg_pool2d(x, (1, 1))
         x = torch.flatten(x, 1)
         x = self.dropout(x)
         x = self.fc(x)
@@ -92,7 +90,7 @@ class Normalize_rgb():
 
 
 
-if __name__() == '__main__':
+if __name__ == '__main__':
     pass
     # # download model
     # model_path = hf_hub_download(repo_id="arnabdhar/YOLOv8-Face-Detection", filename="model.pt")
