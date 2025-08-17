@@ -1,8 +1,8 @@
 
-# from huggingface_hub import hf_hub_download
-# from ultralytics import YOLO
+from huggingface_hub import hf_hub_download
+from ultralytics import YOLO
 # from supervision import Detections
-# from PIL import Image
+from PIL import Image
 import torch
 import os
 from torch.utils.data import Dataset, DataLoader
@@ -10,9 +10,8 @@ import numpy as np
 from data_load import Rescale, RandomCrop
 import matplotlib.image as mpimg
 import pandas as pd
-
-
 from torchvision.models import densenet121
+
 
 class CustomDenseNet(torch.nn.Module):
     def __init__(self):
@@ -67,8 +66,7 @@ class FacialKeypointsDataset(Dataset):
             sample = self.transform(sample)
 
         return sample
-
-
+    
 
 class Normalize_rgb():
     def __init__(self, mean, std):
@@ -89,22 +87,21 @@ class Normalize_rgb():
         return {'image': image, 'keypoints': key_pts}
 
 
+def YOLO_pose(number_of_epochs):
+    model_path = hf_hub_download(repo_id="arnabdhar/YOLOv8-Face-Detection", filename="model.pt")
+
+    model = YOLO('custom_YOLO_pose.yaml')
+    model = YOLO(model_path)
+    model = YOLO('custom_YOLO_pose.yaml').load('yolov8n-pose.pt')
+
+    backbone = model.model.model[: -1]
+    for param in backbone.parameters():
+        param.requires_grad = False
+
+    train_results = model.train(data="data/data.yaml", epochs=number_of_epochs, imgsz=224)
+
+    return model, train_results
+
 
 if __name__ == '__main__':
     pass
-    # # download model
-    # model_path = hf_hub_download(repo_id="arnabdhar/YOLOv8-Face-Detection", filename="model.pt")
-
-    # # load model
-    # model = YOLO(model_path)
-
-    # # print(type(model.model))
-    # # print()
-    # print(model.model[22:])
-
-    # # # inference
-    # # image_path = os.path.join('data', 'test', 'Adam_Sandler_00.jpg')
-    # # output = model(Image.open(image_path))
-    # # results = Detections.from_ultralytics(output[0])
-
-    # # print(results)

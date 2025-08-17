@@ -1,0 +1,16 @@
+
+# Custom dataset settings for YOLOv8 Pose Estimation
+
+# Path to the dataset directory
+path: data
+train: images/train
+val: images/test
+
+# Class information for bounding box detection
+nc: 1
+names: ['person']
+
+# Keypoint information
+kpt_shape: [68, 2]
+kpt_names: ['point_0', 'point_1', 'point_2', 'point_3', 'point_4', 'point_5', 'point_6', 'point_7', 'point_8', 'point_9', 'point_10', 'point_11', 'point_12', 'point_13', 'point_14', 'point_15', 'point_16', 'point_17', 'point_18', 'point_19', 'point_20', 'point_21', 'point_22', 'point_23', 'point_24', 'point_25', 'point_26', 'point_27', 'point_28', 'point_29', 'point_30', 'point_31', 'point_32', 'point_33', 'point_34', 'point_35', 'point_36', 'point_37', 'point_38', 'point_39', 'point_40', 'point_41', 'point_42', 'point_43', 'point_44', 'point_45', 'point_46', 'point_47', 'point_48', 'point_49', 'point_50', 'point_51', 'point_52', 'point_53', 'point_54', 'point_55', 'point_56', 'point_57', 'point_58', 'point_59', 'point_60', 'point_61', 'point_62', 'point_63', 'point_64', 'point_65', 'point_66', 'point_67']
+skeleton: []
