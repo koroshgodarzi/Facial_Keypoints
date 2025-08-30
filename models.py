@@ -8,6 +8,7 @@ import torch.nn.functional as F
 import torch.nn.init as I
 
 
+
 class Net_GAP1(nn.Module):
 
     def __init__(self):
@@ -273,6 +274,64 @@ class Net2(nn.Module):
         # a modified x, having gone through all the layers of your model, should be returned
         return x
     
+
+class Net2_skip(nn.Module):
+    def __init__(self):
+        super(Net2_skip, self).__init__()
+
+        self.conv1 = nn.Conv2d(1, 32, 3, padding=1)
+        self.conv2 = nn.Conv2d(32, 64, 3, padding=1)
+        self.conv3 =  nn.Conv2d(64, 128, 3, padding=1)
+        self.conv4 =  nn.Conv2d(128, 256, 3, padding=1)
+        self.pool = nn.MaxPool2d(2, 2)
+
+        # Transpose convolution for x1 (channels=32): (224, 224) -> (224, 224)
+        # The dimensions are already correct, so a stride of 1 is used.
+        self.t_conv1 = nn.ConvTranspose2d(32, 32, kernel_size=3, stride=1, padding=1)
+        
+        # Transpose convolution for x2 (channels=64): (112, 112) -> (224, 224)
+        # A stride of 2 is needed to double the dimensions.
+        self.t_conv2 = nn.ConvTranspose2d(64, 64, kernel_size=4, stride=2, padding=1)
+        
+        # Transpose convolution for x3 (channels=128): (56, 56) -> (224, 224)
+        # A stride of 4 is needed to multiply the dimensions by 4.
+        self.t_conv3 = nn.ConvTranspose2d(128, 128, kernel_size=4, stride=4, padding=0, output_padding=0)
+
+        # Transpose convolution for x4 (channels=256): (28, 28) -> (224, 224)
+        # A stride of 8 is needed to multiply the dimensions by 8.
+        self.t_conv4 = nn.ConvTranspose2d(256, 256, kernel_size=8, stride=8, padding=0, output_padding=0)
+
+        self.conv_1d = nn.Conv2d(32+64+128+256, 1, 3, padding=1)
+
+        self.dropout = nn.Dropout(p=0.5)
+        self.fc1 =  nn.Linear(224*224, 136)
+
+
+
+    def forward(self, x):
+        x1 = F.relu(self.conv1(x))
+        x2 = self.pool(x1)
+        x2 = F.relu(self.conv2(x2))
+        x3 = self.pool(x2)
+        x3 = F.relu(self.conv3(x3))
+        x4 = self.pool(x3)
+        x4 = F.relu(self.conv4(x4))
+
+        x1 = self.t_conv1(x1)
+        x2 = self.t_conv2(x2)
+        x3 = self.t_conv3(x3)
+        x4 = self.t_conv4(x4)
+
+        x = torch.cat((x1, x2, x3, x4), 1)
+        x = self.conv_1d(x)
+
+        x = x.view(x.size(0), -1)
+        x = self.dropout(x)
+        x = self.fc1(x)
+
+        return x
+
+
 
 class Net3(nn.Module):
 
